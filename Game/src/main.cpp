@@ -1,27 +1,43 @@
-#include "SFML/Graphics.hpp"
-#include "Engine/src/Test.h"
+#include "imgui.h"
+#include "imgui-SFML.h"
+
+#include "Engine/src/Engine.h"
 
 int main()
 {
-	engine::hello();
-
 	sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML Engine");
-	sf::CircleShape shape(100.f);
-	shape.setFillColor(sf::Color::Green);
+	ImGui::SFML::Init(window);
 
+	sf::Clock clock;
+	sf::Time elapsed;
+
+	engine::Engine gameEngine{ window };
 	while (window.isOpen())
 	{
+		elapsed = clock.restart();
+
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
+			ImGui::SFML::ProcessEvent(event);
 			if (event.type == sf::Event::Closed)
 				window.close();
 		}
+		
+		ImGui::SFML::Update(window, elapsed);
+		gameEngine.Update(elapsed);
+
+		ImGui::Begin("window");
+		ImGui::Text("Hello");
+		ImGui::End();
 
 		window.clear();
-		window.draw(shape);
+		gameEngine.Render();
+		ImGui::SFML::Render(window);
 		window.display();
 	}
+
+	ImGui::SFML::Shutdown();
 
 	return 0;
 }
