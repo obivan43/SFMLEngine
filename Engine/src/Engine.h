@@ -12,6 +12,7 @@ namespace engine
 
 			sf::RenderWindow& GetWindow() { return m_Window; }
 
+			void ProcessInput(const sf::Event& event);
 			void Update(const sf::Time& time);
 			void Render();
 
@@ -23,8 +24,7 @@ namespace engine
 
 			int32_t m_FPS;
 			float m_ElapsedTime;
-
-			sf::CircleShape m_Shape;
+			int m_AppleCount;
 	};
 
 }

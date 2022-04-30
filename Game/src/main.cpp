@@ -5,13 +5,16 @@
 
 int main()
 {
-	sf::RenderWindow window(sf::VideoMode(1280, 720), "SFML Engine");
+	sf::ContextSettings settings;
+	settings.antialiasingLevel = 8;
+
+	sf::RenderWindow window(sf::VideoMode(800, 600), "SFML Engine", sf::Style::Default, settings);
 	ImGui::SFML::Init(window);
 
 	sf::Clock clock;
 	sf::Time elapsed;
 
-	engine::Engine gameEngine{ window };
+	engine::Engine sfmlEngine{ window };
 	while (window.isOpen())
 	{
 		elapsed = clock.restart();
@@ -20,19 +23,25 @@ int main()
 		while (window.pollEvent(event))
 		{
 			ImGui::SFML::ProcessEvent(event);
-			if (event.type == sf::Event::Closed)
-				window.close();
+			switch (event.type) 
+			{
+				case sf::Event::Closed:
+					window.close();
+				break;
+
+				case sf::Event::KeyPressed:
+					sfmlEngine.ProcessInput(event);
+				break;
+
+				default: break;
+			};
 		}
 		
 		ImGui::SFML::Update(window, elapsed);
-		gameEngine.Update(elapsed);
+		sfmlEngine.Update(elapsed);
 
-		ImGui::Begin("window");
-		ImGui::Text("Hello");
-		ImGui::End();
-
-		window.clear();
-		gameEngine.Render();
+		window.clear(sf::Color::Yellow);
+		sfmlEngine.Render();
 		ImGui::SFML::Render(window);
 		window.display();
 	}
